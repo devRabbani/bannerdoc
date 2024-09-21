@@ -1,4 +1,15 @@
 // Subtle color palette using OKLCH
+export const colorPaletteLegacy = [
+  "oklch(85% 0.1 30)", // Soft blue
+  "oklch(80% 0.1 60)", // Muted green
+  "oklch(75% 0.1 90)", // Subtle orange
+  "oklch(70% 0.1 120)", // Soft purple
+  "oklch(85% 0.1 180)", // Light teal
+  "oklch(90% 0.1 45)", // Light cyan
+  "oklch(88% 0.1 75)", // Light lime
+  "oklch(82% 0.1 135)", // Light magenta
+];
+
 export const colorPalette = [
   "oklch(85% 0.1 30)", // Soft blue
   "oklch(80% 0.1 60)", // Muted green
@@ -8,6 +19,14 @@ export const colorPalette = [
   "oklch(90% 0.1 45)", // Light cyan
   "oklch(88% 0.1 75)", // Light lime
   "oklch(82% 0.1 135)", // Light magenta
+  "oklch(78% 0.1 15)", // Soft red
+  "oklch(92% 0.1 200)", // Pale blue
+  "oklch(87% 0.1 160)", // Mint green
+  "oklch(83% 0.1 100)", // Peach
+  "oklch(95% 0.05 60)", // Very light green
+  "oklch(93% 0.05 30)", // Very light blue
+  "oklch(91% 0.05 90)", // Very light orange
+  "oklch(89% 0.05 150)", // Very light purple
 ];
 
 // Subtle background patterns

@@ -5,6 +5,15 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { backgroundPatterns, colorPalette } from "@/lib/constants";
+import { getAverageColor, getContrastColor } from "@/lib/utils";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./ui/collapsible";
+import { Input } from "./ui/input";
+import { Separator } from "./ui/separator";
+import { ArrowDownIcon } from "@radix-ui/react-icons";
 
 const IMAGE_WIDTH = 1500;
 const HALF_IMAGE_WIDTH = 1500 / 2;
@@ -12,8 +21,16 @@ const IMAGE_HEIGHT = 500;
 const HALF_IMAGE_HEIGHT = 500 / 2;
 
 export default function BannerGenerator() {
-  const [text, setText] = useState("");
   const [bannerUrl, setBannerUrl] = useState("");
+  const [headerText, setHeaderText] = useState("");
+  const [text, setText] = useState("");
+  const [align, setAlign] = useState<"center" | "left" | "right">("center");
+  const [fillMode, setFillMode] = useState<"auto" | "flat" | "gradient">(
+    "auto"
+  );
+  const [patternIntensity, setPatternIntensity] = useState(0.1);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const generateBanner = () => {
@@ -135,49 +152,6 @@ export default function BannerGenerator() {
     }
   };
 
-  // Function to get the average color of the canvas
-  const getAverageColor = (
-    ctx: CanvasRenderingContext2D,
-    width: number,
-    height: number
-  ) => {
-    const imageData = ctx.getImageData(0, 0, width, height);
-    let r = 0,
-      g = 0,
-      b = 0;
-
-    // Image Data will be in this format [r,g,b,a,r,g,b,a,r,g,b,a, ...]
-    // Skipping 4 beacuse of extra allpha value
-    for (let i = 0; i < imageData.data.length; i += 4) {
-      r += imageData.data[i];
-      g += imageData.data[i + 1];
-      b += imageData.data[i + 2];
-    }
-
-    const pixelCount = imageData.data.length / 4;
-    r = Math.floor(r / pixelCount);
-    g = Math.floor(g / pixelCount);
-    b = Math.floor(b / pixelCount);
-
-    return `rgb(${r},${g},${b})`;
-  };
-
-  // Function to get a contrasting color (black or white)
-  const getContrastColor = (color: string) => {
-    const rgb = color.match(/\d+/g);
-    if (rgb) {
-      // Calculate brightness using the formula: (R*299 + G*587 + B*114) / 1000
-      // Numbers are weighted based on human perception of color
-      const brightness =
-        (parseInt(rgb[0]) * 299 +
-          parseInt(rgb[1]) * 587 +
-          parseInt(rgb[2]) * 114) /
-        1000;
-      return brightness > 128 ? "#000000" : "#FFFFFF";
-    }
-    return "#000000";
-  };
-
   useEffect(() => {
     if (canvasRef.current) {
       canvasRef.current.width = 1500;
@@ -194,8 +168,34 @@ export default function BannerGenerator() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter your banner text here..."
-          className="mt-1"
+          className="mt-1 mb-7"
         />
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <div className="w-full">
+              <Separator className="mt-5 w-full" />
+              <Button
+                variant="link"
+                className="-mt-5 ml-2 bg-background gap-1 w-fit px-2 flex items-center"
+              >
+                {" "}
+                Show Advanced <ArrowDownIcon />
+              </Button>
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div>
+              <Label htmlFor="headerText">Header text:</Label>
+              <Input
+                id="headerText"
+                value={headerText}
+                onChange={(e) => setHeaderText(e.target.value)}
+                placeholder="Enter your header text here..."
+                className="mt-1"
+              />
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
         <Button onClick={generateBanner} className="mt-2">
           Generate Banner
         </Button>
