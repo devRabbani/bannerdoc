@@ -6,6 +6,11 @@ import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { backgroundPatterns, colorPalette } from "@/lib/constants";
 
+const IMAGE_WIDTH = 1500;
+const HALF_IMAGE_WIDTH = 1500 / 2;
+const IMAGE_HEIGHT = 500;
+const HALF_IMAGE_HEIGHT = 500 / 2;
+
 export default function BannerGenerator() {
   const [text, setText] = useState("");
   const [bannerUrl, setBannerUrl] = useState("");
@@ -17,43 +22,59 @@ export default function BannerGenerator() {
       const ctx = canvas.getContext("2d");
 
       if (ctx) {
+        // Color Count 50% Chance
+        const colorCount = Math.random() < 0.5 ? 2 : 3;
         // Select colors
         const selectedColors = [...colorPalette]
           .sort(() => Math.random() - 0.5)
-          .slice(0, 3);
+          .slice(0, colorCount);
 
-        // Create gradient
-        const gradientType = Math.random() < 0.5 ? "linear" : "radial";
-        let gradient;
+        // Is gradiant 70% chance
+        const isGradient = Math.random() < 0.7;
+        if (isGradient) {
+          const gradientType = Math.random() < 0.5 ? "linear" : "radial";
+          let gradient;
 
-        if (gradientType === "linear") {
-          const angle = Math.random() * 360;
-          const startX = 750 + 750 * Math.cos((angle * Math.PI) / 180);
-          const startY = 250 + 250 * Math.sin((angle * Math.PI) / 180);
-          const endX = 750 - 750 * Math.cos((angle * Math.PI) / 180);
-          const endY = 250 - 250 * Math.sin((angle * Math.PI) / 180);
-          gradient = ctx.createLinearGradient(startX, startY, endX, endY);
+          if (gradientType === "linear") {
+            const angle = Math.random() * 360;
+
+            const startX =
+              HALF_IMAGE_WIDTH +
+              HALF_IMAGE_WIDTH * Math.cos((angle * Math.PI) / 180);
+            const startY =
+              HALF_IMAGE_HEIGHT +
+              HALF_IMAGE_HEIGHT * Math.sin((angle * Math.PI) / 180);
+            const endX =
+              HALF_IMAGE_WIDTH -
+              HALF_IMAGE_WIDTH * Math.cos((angle * Math.PI) / 180);
+            const endY =
+              HALF_IMAGE_HEIGHT -
+              HALF_IMAGE_HEIGHT * Math.sin((angle * Math.PI) / 180);
+
+            gradient = ctx.createLinearGradient(startX, startY, endX, endY);
+          } else {
+            const centerX = 750 + (Math.random() - 0.5) * 500;
+            const centerY = 250 + (Math.random() - 0.5) * 200;
+            gradient = ctx.createRadialGradient(
+              centerX,
+              centerY,
+              0,
+              centerX,
+              centerY,
+              1000
+            );
+          }
+
+          // Add color stops
+          selectedColors.forEach((color, index) => {
+            gradient.addColorStop(index / (selectedColors.length - 1), color); // 0,0.5,1 or 0,1
+          });
+          ctx.fillStyle = gradient;
         } else {
-          const centerX = 750 + (Math.random() - 0.5) * 500;
-          const centerY = 250 + (Math.random() - 0.5) * 200;
-          gradient = ctx.createRadialGradient(
-            centerX,
-            centerY,
-            0,
-            centerX,
-            centerY,
-            1000
-          );
+          ctx.fillStyle = selectedColors[0];
         }
-
-        // Add color stops
-        selectedColors.forEach((color, index) => {
-          gradient.addColorStop(index / (selectedColors.length - 1), color);
-        });
-
-        // Fill background with gradient
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, 1500, 500);
+        // Fill the canvas with the selected color
+        ctx.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 
         // Apply subtle pattern
         const patternImg = new Image();
@@ -65,7 +86,7 @@ export default function BannerGenerator() {
           if (patternImg.src !== "data:,") {
             const pattern = ctx.createPattern(patternImg, "repeat");
             if (pattern) {
-              ctx.globalAlpha = 0.3;
+              ctx.globalAlpha = 0.8;
               ctx.fillStyle = pattern;
               ctx.fillRect(0, 0, 1500, 500);
               ctx.globalAlpha = 1;
@@ -73,7 +94,11 @@ export default function BannerGenerator() {
           }
 
           // Add text with a contrasting color and shadow for readability
-          const backgroundColor = getAverageColor(ctx, 1500, 500);
+          const backgroundColor = getAverageColor(
+            ctx,
+            IMAGE_WIDTH,
+            IMAGE_HEIGHT
+          );
           const textColor = getContrastColor(backgroundColor);
 
           ctx.fillStyle = textColor;
@@ -88,21 +113,21 @@ export default function BannerGenerator() {
 
           const words = text.split(" ");
           let line = "";
-          let y = 250; // Start in the middle of the canvas
+          let y = HALF_IMAGE_HEIGHT; // Start in the middle of the canvas
           for (let i = 0; i < words.length; i++) {
             const testLine = line + words[i] + " ";
             const metrics = ctx.measureText(testLine);
             const testWidth = metrics.width;
 
             if (testWidth > 1400 && i > 0) {
-              ctx.fillText(line, 750, y);
+              ctx.fillText(line, HALF_IMAGE_WIDTH, y);
               line = words[i] + " ";
-              y += 60;
+              y += 60; // 60 is the line height
             } else {
               line = testLine;
             }
           }
-          ctx.fillText(line, 750, y);
+          ctx.fillText(line, HALF_IMAGE_WIDTH, y);
 
           setBannerUrl(canvas.toDataURL("image/png"));
         };
@@ -121,6 +146,8 @@ export default function BannerGenerator() {
       g = 0,
       b = 0;
 
+    // Image Data will be in this format [r,g,b,a,r,g,b,a,r,g,b,a, ...]
+    // Skipping 4 beacuse of extra allpha value
     for (let i = 0; i < imageData.data.length; i += 4) {
       r += imageData.data[i];
       g += imageData.data[i + 1];
@@ -139,6 +166,8 @@ export default function BannerGenerator() {
   const getContrastColor = (color: string) => {
     const rgb = color.match(/\d+/g);
     if (rgb) {
+      // Calculate brightness using the formula: (R*299 + G*587 + B*114) / 1000
+      // Numbers are weighted based on human perception of color
       const brightness =
         (parseInt(rgb[0]) * 299 +
           parseInt(rgb[1]) * 587 +
