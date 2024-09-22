@@ -80,7 +80,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} flex min-h-screen flex-col antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -88,7 +90,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Nav />
-          <main className="container pb-16 pt-2">{children}</main>
+          <main className="container h-full pb-16 pt-2">{children}</main>
           <Footer />
         </ThemeProvider>
       </body>

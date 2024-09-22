@@ -37,7 +37,7 @@ export default function BannerGenerator() {
   const [palette, setPalette] = useState<PaletteType>("cool");
   const [patternIntensity, setPatternIntensity] = useState(0.1);
   const [fontSize, setFontSize] = useState(48);
-  const [showAdvanced, setShowAdvanced] = useState(true);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [customColor1, setCustomColor1] = useState("#000000");
   const [customColor2, setCustomColor2] = useState("#ffffff");
 
