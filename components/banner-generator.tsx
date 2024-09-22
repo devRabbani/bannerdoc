@@ -65,6 +65,29 @@ export default function BannerGenerator() {
   const [customColor2, setCustomColor2] = useState("#ffffff");
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const bannerContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleReset = () => {
+    setBannerUrl("");
+    setHeaderText("");
+    setText("");
+    setAlign("center");
+    setFillMode("auto");
+    setPalette("cool");
+    setPatternIntensity(0.1);
+    setFontSize(48);
+    setCustomColor1("#000000");
+    setCustomColor2("#ffffff");
+  };
+
+  const downloadBanner = () => {
+    if (bannerUrl) {
+      const link = document.createElement("a");
+      link.href = bannerUrl;
+      link.download = "twitter-banner.png";
+      link.click();
+    }
+  };
 
   const generateBanner = async () => {
     if (canvasRef.current) {
@@ -82,6 +105,7 @@ export default function BannerGenerator() {
         await applyPattern(ctx, patternIntensity);
         const x = setupTextRendering(ctx, align);
         renderText(ctx, headerText, text, x, fontSize);
+        bannerContainerRef.current?.scrollIntoView({ behavior: "smooth" });
         setBannerUrl(canvas.toDataURL());
       }
     }
@@ -95,16 +119,24 @@ export default function BannerGenerator() {
   }, []);
 
   return (
-    <div className="mx-auto py-4 space-y-6">
+    <div
+      ref={bannerContainerRef}
+      className=" mx-auto py-4 space-y-6 scroll-mt-56"
+    >
       <div className="">
-        <div className="relative aspect-[3/1] w-full mx-auto bg-muted-foreground/80 rounded-md overflow-hidden">
+        <div className="relative scroll-mt-56 aspect-[3/1] w-full mx-auto bg-muted-foreground/80 rounded-md overflow-hidden">
           <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
         </div>
         <div className="flex items-end justify-between">
           <div className="w-[22.3%]  aspect-square rounded-full border-4 border-background -mt-[11%] ml-5 relative bg-gray-700 grid place-items-center text-gray-100 ">
             <User2Icon className="h-1/2 w-1/2" />
           </div>
-          <Button variant="outline" className="mb-3 mr-3">
+          <Button
+            disabled={!bannerUrl}
+            onClick={downloadBanner}
+            variant="outline"
+            className="mb-3 mr-3"
+          >
             Download
           </Button>
         </div>
@@ -170,9 +202,14 @@ export default function BannerGenerator() {
             </div>
           </CollapsibleContent>
         </Collapsible>
-        <Button onClick={generateBanner} className="mt-6">
-          Generate Banner
-        </Button>
+        <div className="space-x-3">
+          <Button onClick={generateBanner} className="mt-6">
+            Generate Banner
+          </Button>
+          <Button onClick={handleReset} variant="secondary" className="w-36">
+            Reset
+          </Button>
+        </div>
       </div>
     </div>
   );
