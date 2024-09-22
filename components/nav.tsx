@@ -4,7 +4,7 @@ import { ModeToggle } from "./theme-toggle";
 
 export default function Nav() {
   return (
-    <nav className="bg-background">
+    <nav className="bg-background sticky top-0 z-50">
       <div className="container py-3 flex justify-between items-center">
         <Link href="/" className="text-lg font-medium">
           BannerDoc

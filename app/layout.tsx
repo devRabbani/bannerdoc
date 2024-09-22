@@ -30,7 +30,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Nav />
-          <main className="container py-5">{children}</main>
+          <main className="container pt-2 pb-16">{children}</main>
         </ThemeProvider>
       </body>
     </html>

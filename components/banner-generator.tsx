@@ -21,6 +21,7 @@ import {
   ChevronDown,
   Shuffle,
   Square,
+  User2Icon,
 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Slider } from "./ui/slider";
@@ -39,6 +40,7 @@ import BannerText from "./banner-text";
 import CustomColorPicker from "./custom-color-picker";
 import SettingSliders from "./setting-sliders";
 import { AlignType, FillModeType, PaletteType } from "@/lib/types";
+import BannerPreview from "./banner-preview";
 
 const IMAGE_WIDTH = 1500;
 const HALF_IMAGE_WIDTH = 1500 / 2;
@@ -211,7 +213,16 @@ export default function BannerGenerator() {
 
   return (
     <div className="mx-auto py-4 space-y-6">
-      <div>
+      <div className="">
+        <div className="relative aspect-[3/1] w-full mx-auto bg-muted-foreground/80 rounded-md overflow-hidden">
+          <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+        </div>
+
+        <div className="w-[22.3%]  aspect-square rounded-full border-4 border-background -mt-[11%] ml-5 relative bg-gray-700 grid place-items-center text-gray-100 ">
+          <User2Icon className="h-1/2 w-1/2" />
+        </div>
+      </div>
+      <div className="">
         <BannerText text={text} setText={setText} />
         <Collapsible
           className="mt-6"
@@ -275,17 +286,6 @@ export default function BannerGenerator() {
         <Button onClick={generateBanner} className="mt-6">
           Generate Banner
         </Button>
-      </div>
-
-      <div className="relative aspect-[3/1] w-full max-w-2xl mx-auto">
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
-        {bannerUrl && (
-          <img
-            src={bannerUrl}
-            alt="Generated Twitter Banner"
-            className="w-full h-full object-cover"
-          />
-        )}
       </div>
     </div>
   );
