@@ -61,7 +61,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border scroll-mt-16 scroll-pt-56;
   }
   body {
     @apply bg-background text-foreground;
