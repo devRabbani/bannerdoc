@@ -66,4 +66,4 @@ export const IMAGE_WIDTH = 1500;
 export const HALF_IMAGE_WIDTH = 1500 / 2;
 export const IMAGE_HEIGHT = 500;
 export const HALF_IMAGE_HEIGHT = 500 / 2;
-export const IMAGE_PADDING = 70;
+export const IMAGE_PADDING = 80;
