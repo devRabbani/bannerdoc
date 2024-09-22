@@ -1,8 +1,5 @@
 import { Blend, Shuffle, Square } from "lucide-react";
-import { Label } from "./ui/label";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { FillModeType } from "@/lib/types";
-import FormDiv from "./form-div";
 import IconRadioGroup from "./icon-radio-group";
 
 const fillOptions = [
