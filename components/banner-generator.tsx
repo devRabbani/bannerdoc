@@ -31,22 +31,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import FormDiv from "./form-div";
+import AlignItemsRadio from "./align-items-radio";
+import { ColorModeRadio } from "./color-mode-radio";
+import SelectColorPalette from "./select-color-palette";
+import BannerText from "./banner-text";
+import CustomColorPicker from "./custom-color-picker";
+import SettingSliders from "./setting-sliders";
+import { AlignType, FillModeType, PaletteType } from "@/lib/types";
 
 const IMAGE_WIDTH = 1500;
 const HALF_IMAGE_WIDTH = 1500 / 2;
 const IMAGE_HEIGHT = 500;
 const HALF_IMAGE_HEIGHT = 500 / 2;
-
-type AlignType = "center" | "left" | "right";
-type FillModeType = "auto" | "flat" | "gradient";
-type PaletteType =
-  | "cool"
-  | "warm"
-  | "pastel"
-  | "dark"
-  | "grayscale"
-  | "vibrant"
-  | "custom";
 
 export default function BannerGenerator() {
   const [bannerUrl, setBannerUrl] = useState("");
@@ -213,23 +210,20 @@ export default function BannerGenerator() {
   }, []);
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
+    <div className="mx-auto py-4 space-y-6">
       <div>
-        <Label htmlFor="bannerText">Enter text for your banner:</Label>
-        <Textarea
-          id="bannerText"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Enter your banner text here..."
-          className="mt-1 mb-7"
-        />
-        <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
+        <BannerText text={text} setText={setText} />
+        <Collapsible
+          className="mt-6"
+          open={showAdvanced}
+          onOpenChange={setShowAdvanced}
+        >
           <CollapsibleTrigger asChild>
             <div className="w-full">
               <Separator />
               <Button
                 variant="link"
-                className="-mt-5 ml-1.5 bg-background gap-1 w-fit px-2 flex items-center"
+                className="-mt-5 bg-background gap-1 w-fit px-2 flex items-center"
               >
                 Show Advanced{" "}
                 <ChevronDown
@@ -240,172 +234,45 @@ export default function BannerGenerator() {
               </Button>
             </div>
           </CollapsibleTrigger>
-          <CollapsibleContent>
-            <div>
+          <CollapsibleContent className="space-y-4 py-2">
+            <FormDiv>
               <Label htmlFor="headerText">Header text:</Label>
               <Input
                 id="headerText"
                 value={headerText}
                 onChange={(e) => setHeaderText(e.target.value)}
                 placeholder="Enter your header text here..."
-                className="mt-1"
               />
-            </div>
-            <div>
-              <Label>Text Alignment:</Label>
-              <RadioGroup
-                value={align}
-                onValueChange={(value: "left" | "center" | "right") =>
-                  setAlign(value)
-                }
-                className="flex mt-2"
-              >
-                <div className="flex items-center space-x-3">
-                  <Label
-                    htmlFor="left"
-                    className="flex flex-col justify-center items-center bg-popover rounded-md w-16 h-14 gap-1 hover:bg-accent cursor-pointer hover:text-accent-foreground [&:has([data-state=checked])]:border-primary border-muted [&:has([data-state=checked])]:text-primary border-2"
-                  >
-                    <AlignLeft className="h-5 w-5" />
-                    <span className="text-[0.7rem]">Left</span>
-                    <RadioGroupItem
-                      value="left"
-                      id="left"
-                      className="sr-only"
-                    />
-                  </Label>
-                  <Label
-                    htmlFor="center"
-                    className="flex flex-col justify-center items-center bg-popover rounded-md w-16 h-14 gap-1 hover:bg-accent cursor-pointer hover:text-accent-foreground [&:has([data-state=checked])]:border-primary border-muted [&:has([data-state=checked])]:text-primary border-2"
-                  >
-                    <AlignCenter className="h-5 w-5" />
-                    <span className="text-[0.7rem]">Center</span>
-                    <RadioGroupItem
-                      value="center"
-                      id="center"
-                      className="sr-only"
-                    />
-                  </Label>
-                  <Label
-                    htmlFor="right"
-                    className="flex flex-col justify-center items-center bg-popover rounded-md w-16 h-14 gap-1 hover:bg-accent cursor-pointer hover:text-accent-foreground [&:has([data-state=checked])]:border-primary border-muted [&:has([data-state=checked])]:text-primary border-2"
-                  >
-                    <AlignRight className="h-5 w-5" />
-                    <span className="text-[0.7rem]">Right</span>
-                    <RadioGroupItem
-                      value="right"
-                      id="right"
-                      className="sr-only"
-                    />
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-            <div>
-              <Label>Color Mode:</Label>
-              <RadioGroup
-                value={fillMode}
-                onValueChange={(value) =>
-                  setFillMode(value as "auto" | "flat" | "gradient")
-                }
-                className="flex space-x-1 mt-1"
-              >
-                <Label
-                  htmlFor="auto"
-                  className="flex flex-col justify-center items-center bg-popover rounded-md w-16 h-14 gap-1 hover:bg-accent cursor-pointer hover:text-accent-foreground [&:has([data-state=checked])]:border-primary border-muted [&:has([data-state=checked])]:text-primary border-2"
-                >
-                  <Shuffle className="h-5 w-5" />
-                  <span className="text-[0.7rem]">Auto</span>
-                  <RadioGroupItem value="auto" id="auto" className="sr-only" />
-                </Label>
-                <Label
-                  htmlFor="flat"
-                  className="flex flex-col justify-center items-center bg-popover rounded-md w-16 h-14 gap-1 hover:bg-accent cursor-pointer hover:text-accent-foreground [&:has([data-state=checked])]:border-primary border-muted [&:has([data-state=checked])]:text-primary border-2"
-                >
-                  <Square className="h-5 w-5" />
-                  <span className="text-[0.7rem]">Flat</span>
-                  <RadioGroupItem value="flat" id="flat" className="sr-only" />
-                </Label>
-                <Label
-                  htmlFor="gradient"
-                  className="flex flex-col justify-center items-center bg-popover rounded-md w-16 h-14 gap-1 hover:bg-accent cursor-pointer hover:text-accent-foreground [&:has([data-state=checked])]:border-primary border-muted [&:has([data-state=checked])]:text-primary border-2"
-                >
-                  <Blend className="h-5 w-5" />
-                  <span className="text-[0.7rem]">Gradient</span>
-                  <RadioGroupItem
-                    value="gradient"
-                    id="gradient"
-                    className="sr-only"
-                  />
-                </Label>
-              </RadioGroup>
-            </div>
-            <div>
-              <Label htmlFor="colorPalette">Color Palette:</Label>
-              <Select
-                value={palette}
-                onValueChange={(value: PaletteType) => setPalette(value)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a color palette" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="cool">Cool</SelectItem>
-                  <SelectItem value="warm">Warm</SelectItem>
-                  <SelectItem value="grayscale">Grayscale</SelectItem>
-                  <SelectItem value="vibrant">Vibrant</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="pastel">Pastel</SelectItem>
-                  <SelectItem value="custom">Custom</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            {palette === "custom" && (
-              <div>
-                <Label>Custom color</Label>
-                <div className="flex gap-3 mt-2">
-                  <Input
-                    value={customColor1}
-                    onChange={(e) => setCustomColor1(e.target.value)}
-                    type="color"
-                    className="w-14 h-14 p-1"
-                  />
-                  <Input
-                    value={customColor2}
-                    onChange={(e) => setCustomColor2(e.target.value)}
-                    type="color"
-                    className="w-14 h-14 p-1"
-                  />
-                </div>
+            </FormDiv>
+            <div className="flex flex-row-reverse gap-8 items-start">
+              <div className="space-y-4">
+                <AlignItemsRadio align={align} setAlign={setAlign} />
+                <ColorModeRadio fillMode={fillMode} setFillMode={setFillMode} />
               </div>
-            )}
+              <div className="space-y-4 w-full">
+                <div className="flex gap-3">
+                  <SelectColorPalette value={palette} setValue={setPalette} />
+                  {palette === "custom" && (
+                    <CustomColorPicker
+                      customColor1={customColor1}
+                      customColor2={customColor2}
+                      setCustomColor1={setCustomColor1}
+                      setCustomColor2={setCustomColor2}
+                    />
+                  )}
+                </div>
 
-            <div>
-              <Label>Pattern Intensity:</Label>
-              <Slider
-                value={[patternIntensity]}
-                onValueChange={(value) => setPatternIntensity(value[0])}
-                min={0}
-                max={0.5}
-                step={0.01}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="fontSize">Font Size:</Label>
-              <Slider
-                id="fontSize"
-                value={[fontSize]}
-                onValueChange={(value) => setFontSize(value[0])}
-                min={24}
-                max={72}
-                step={1}
-                className="mt-1"
-              />
-              <div className="text-sm text-gray-500 mt-1">{fontSize}px</div>
+                <SettingSliders
+                  fontSize={fontSize}
+                  setFontSize={setFontSize}
+                  patternIntensity={patternIntensity}
+                  setPatternIntensity={setPatternIntensity}
+                />
+              </div>
             </div>
           </CollapsibleContent>
         </Collapsible>
-        <Button onClick={generateBanner} className="mt-2">
+        <Button onClick={generateBanner} className="mt-6">
           Generate Banner
         </Button>
       </div>
