@@ -3,47 +3,26 @@ import { Label } from "./ui/label";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { FillModeType } from "@/lib/types";
 import FormDiv from "./form-div";
+import IconRadioGroup from "./icon-radio-group";
 
-export function ColorModeRadio({
-  fillMode,
-  setFillMode,
-}: {
+const fillOptions = [
+  { value: "auto", icon: Shuffle, label: "Left" },
+  { value: "flat", icon: Square, label: "Center" },
+  { value: "gradient", icon: Blend, label: "Right" },
+] as const;
+
+type ColorModeRadioProps = {
   fillMode: FillModeType;
-  setFillMode: (fillMode: FillModeType) => void;
-}) {
+  setFillMode: (colorMode: FillModeType) => void;
+};
+
+export function ColorModeRadio({ fillMode, setFillMode }: ColorModeRadioProps) {
   return (
-    <FormDiv>
-      <Label>Color Mode:</Label>
-      <RadioGroup
-        value={fillMode}
-        onValueChange={(value: FillModeType) => setFillMode(value)}
-        className="flex mt-2"
-      >
-        <Label
-          htmlFor="auto"
-          className="flex flex-col justify-center items-center bg-popover rounded-md w-16 h-14 gap-1 hover:bg-accent cursor-pointer hover:text-accent-foreground [&:has([data-state=checked])]:border-primary border-muted [&:has([data-state=checked])]:text-primary border-2"
-        >
-          <Shuffle className="h-5 w-5" />
-          <span className="text-[0.7rem]">Auto</span>
-          <RadioGroupItem value="auto" id="auto" className="sr-only" />
-        </Label>
-        <Label
-          htmlFor="flat"
-          className="flex flex-col justify-center items-center bg-popover rounded-md w-16 h-14 gap-1 hover:bg-accent cursor-pointer hover:text-accent-foreground [&:has([data-state=checked])]:border-primary border-muted [&:has([data-state=checked])]:text-primary border-2"
-        >
-          <Square className="h-5 w-5" />
-          <span className="text-[0.7rem]">Flat</span>
-          <RadioGroupItem value="flat" id="flat" className="sr-only" />
-        </Label>
-        <Label
-          htmlFor="gradient"
-          className="flex flex-col justify-center items-center bg-popover rounded-md w-16 h-14 gap-1 hover:bg-accent cursor-pointer hover:text-accent-foreground [&:has([data-state=checked])]:border-primary border-muted [&:has([data-state=checked])]:text-primary border-2"
-        >
-          <Blend className="h-5 w-5" />
-          <span className="text-[0.7rem]">Gradient</span>
-          <RadioGroupItem value="gradient" id="gradient" className="sr-only" />
-        </Label>
-      </RadioGroup>
-    </FormDiv>
+    <IconRadioGroup
+      label="Color Mode"
+      options={fillOptions}
+      value={fillMode}
+      setValue={setFillMode}
+    />
   );
 }

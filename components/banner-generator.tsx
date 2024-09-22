@@ -2,16 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
-import { backgroundPatterns, colorPalettes } from "@/lib/constants";
 import {
   applyBackground,
   applyPattern,
-  getAverageColor,
-  getContrastColor,
   renderText,
-  renderTextWithWrapping,
   selectColors,
   setupTextRendering,
 } from "@/lib/utils";
@@ -22,25 +17,8 @@ import {
 } from "./ui/collapsible";
 import { Input } from "./ui/input";
 import { Separator } from "./ui/separator";
-import {
-  AlignCenter,
-  AlignLeft,
-  AlignRight,
-  Blend,
-  ChevronDown,
-  Shuffle,
-  Square,
-  User2Icon,
-} from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Slider } from "./ui/slider";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+import { ChevronDown, User2Icon } from "lucide-react";
+
 import FormDiv from "./form-div";
 import AlignItemsRadio from "./align-items-radio";
 import { ColorModeRadio } from "./color-mode-radio";
@@ -49,7 +27,6 @@ import BannerText from "./banner-text";
 import CustomColorPicker from "./custom-color-picker";
 import SettingSliders from "./setting-sliders";
 import { AlignType, FillModeType, PaletteType } from "@/lib/types";
-import BannerPreview from "./banner-preview";
 
 export default function BannerGenerator() {
   const [bannerUrl, setBannerUrl] = useState("");
@@ -99,7 +76,7 @@ export default function BannerGenerator() {
           palette,
           fillMode,
           customColor1,
-          customColor2
+          customColor2,
         );
         applyBackground(ctx, fillMode, selectedColors);
         await applyPattern(ctx, patternIntensity);
@@ -121,21 +98,21 @@ export default function BannerGenerator() {
   return (
     <div
       ref={bannerContainerRef}
-      className=" mx-auto py-4 space-y-6 scroll-mt-56"
+      className="mx-auto scroll-mt-56 space-y-6 py-4"
     >
       <div className="">
-        <div className="relative scroll-mt-56 aspect-[3/1] w-full mx-auto bg-muted-foreground/80 rounded-md overflow-hidden">
-          <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+        <div className="relative mx-auto aspect-[3/1] w-full scroll-mt-56 overflow-hidden rounded-md bg-muted-foreground/80">
+          <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
         </div>
         <div className="flex items-end justify-between">
-          <div className="w-[22.3%]  aspect-square rounded-full border-4 border-background -mt-[11%] ml-5 relative bg-gray-700 grid place-items-center text-gray-100 ">
+          <div className="relative -mt-[8.5%] ml-5 grid aspect-square w-[17%] place-items-center rounded-full border-2 border-background bg-gray-700 text-gray-100 sm:-mt-[11%] sm:w-[22.3%] sm:border-4">
             <User2Icon className="h-1/2 w-1/2" />
           </div>
           <Button
             disabled={!bannerUrl}
             onClick={downloadBanner}
             variant="outline"
-            className="mb-3 mr-3"
+            className="-mb-4 mr-3 sm:mb-3"
           >
             Download
           </Button>
@@ -153,7 +130,7 @@ export default function BannerGenerator() {
               <Separator />
               <Button
                 variant="link"
-                className="-mt-5 bg-background gap-1 w-fit px-2 flex items-center"
+                className="-mt-5 flex w-fit items-center gap-1 bg-background px-2"
               >
                 Show Advanced{" "}
                 <ChevronDown
@@ -174,12 +151,12 @@ export default function BannerGenerator() {
                 placeholder="Enter your header text here..."
               />
             </FormDiv>
-            <div className="flex flex-row-reverse gap-8 items-start">
-              <div className="space-y-4">
+            <div className="flex flex-col items-start gap-8 md:flex-row-reverse">
+              <div className="flex w-full justify-between gap-2 min-[370px]:justify-start min-[370px]:gap-3 sm:gap-4 md:w-fit md:flex-col">
                 <AlignItemsRadio align={align} setAlign={setAlign} />
                 <ColorModeRadio fillMode={fillMode} setFillMode={setFillMode} />
               </div>
-              <div className="space-y-4 w-full">
+              <div className="w-full space-y-4">
                 <div className="flex gap-3">
                   <SelectColorPalette value={palette} setValue={setPalette} />
                   {palette === "custom" && (
@@ -202,11 +179,15 @@ export default function BannerGenerator() {
             </div>
           </CollapsibleContent>
         </Collapsible>
-        <div className="space-x-3">
-          <Button onClick={generateBanner} className="mt-6">
+        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row">
+          <Button onClick={generateBanner} className="py-5 sm:py-2">
             Generate Banner
           </Button>
-          <Button onClick={handleReset} variant="secondary" className="w-36">
+          <Button
+            onClick={handleReset}
+            variant="secondary"
+            className="py-5 sm:w-36 sm:py-2"
+          >
             Reset
           </Button>
         </div>

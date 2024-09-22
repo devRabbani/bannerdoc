@@ -16,18 +16,18 @@ export default function CustomColorPicker({
   return (
     <FormDiv>
       <Label>Custom color</Label>
-      <div className="flex gap-2">
+      <div className="flex gap-3 sm:gap-2">
         <Input
           value={customColor1}
           onChange={(e) => setCustomColor1(e.target.value)}
           type="color"
-          className="w-11 h-11 p-1 cursor-pointer"
+          className="h-11 w-11 cursor-pointer p-1"
         />
         <Input
           value={customColor2}
           onChange={(e) => setCustomColor2(e.target.value)}
           type="color"
-          className="w-11 h-11 p-1 cursor-pointer"
+          className="h-11 w-11 cursor-pointer p-1"
         />
       </div>
     </FormDiv>
