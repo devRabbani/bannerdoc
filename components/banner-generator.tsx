@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
-import { backgroundPatterns, colorPalette } from "@/lib/constants";
+import { backgroundPatterns, colorPalettes } from "@/lib/constants";
 import { getAverageColor, getContrastColor } from "@/lib/utils";
 import {
   Collapsible,
@@ -13,25 +13,41 @@ import {
 } from "./ui/collapsible";
 import { Input } from "./ui/input";
 import { Separator } from "./ui/separator";
-import { ArrowDownIcon } from "@radix-ui/react-icons";
-import { ChevronDown } from "lucide-react";
+import { AlignLeft, ChevronDown } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Slider } from "./ui/slider";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 const IMAGE_WIDTH = 1500;
 const HALF_IMAGE_WIDTH = 1500 / 2;
 const IMAGE_HEIGHT = 500;
 const HALF_IMAGE_HEIGHT = 500 / 2;
 
+type AlignType = "center" | "left" | "right";
+type FillModeType = "auto" | "flat" | "gradient";
+type PaletteType =
+  | "cool"
+  | "warm"
+  | "pastel"
+  | "dark"
+  | "grayscale"
+  | "vibrant";
+
 export default function BannerGenerator() {
   const [bannerUrl, setBannerUrl] = useState("");
   const [headerText, setHeaderText] = useState("");
   const [text, setText] = useState("");
-  const [align, setAlign] = useState<"center" | "left" | "right">("center");
-  const [fillMode, setFillMode] = useState<"auto" | "flat" | "gradient">(
-    "auto"
-  );
+  const [align, setAlign] = useState<AlignType>("center");
+  const [fillMode, setFillMode] = useState<FillModeType>("auto");
+  const [palette, setPalette] = useState<PaletteType>("cool");
   const [patternIntensity, setPatternIntensity] = useState(0.1);
+  const [fontSize, setFontSize] = useState(48);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -46,7 +62,8 @@ export default function BannerGenerator() {
         const colorCount =
           fillMode === "flat" ? 1 : Math.random() < 0.5 ? 2 : 3;
         // Select colors
-        const selectedColors = [...colorPalette]
+        const selectedColorPalette = colorPalettes[palette];
+        const selectedColors = [...selectedColorPalette]
           .sort(() => Math.random() - 0.5)
           .slice(0, colorCount);
 
@@ -142,12 +159,12 @@ export default function BannerGenerator() {
           let y = headerText.length ? 200 : 250;
 
           if (headerText.length) {
-            ctx.font = "bold 36px Arial";
+            ctx.font = `bold ${fontSize * 0.75}px Arial`;
             ctx.fillText(headerText, x, y);
             y += 60;
           }
 
-          ctx.font = "bold 48px Arial";
+          ctx.font = `bold ${fontSize}px Arial`;
           const words = text.split(" ");
           let line = "";
 
@@ -228,17 +245,27 @@ export default function BannerGenerator() {
                 className="flex space-x-4 mt-1"
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="left" id="left" />
-                  <Label htmlFor="left">Left</Label>
+                  <Label
+                    htmlFor="left"
+                    className="flex flex-col justify-center"
+                  >
+                    <AlignLeft />
+                    <span>Left</span>
+                    <RadioGroupItem
+                      value="left"
+                      id="left"
+                      className="sr-only"
+                    />
+                  </Label>
                 </div>
-                <div className="flex items-center space-x-2">
+                {/* <div className="flex items-center space-x-2">
                   <RadioGroupItem value="center" id="center" />
                   <Label htmlFor="center">Center</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="right" id="right" />
                   <Label htmlFor="right">Right</Label>
-                </div>
+                </div> */}
               </RadioGroup>
             </div>
             <div>
@@ -265,6 +292,25 @@ export default function BannerGenerator() {
               </RadioGroup>
             </div>
             <div>
+              <Label htmlFor="colorPalette">Color Palette:</Label>
+              <Select
+                value={palette}
+                onValueChange={(value: PaletteType) => setPalette(value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a color palette" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cool">Cool</SelectItem>
+                  <SelectItem value="warm">Warm</SelectItem>
+                  <SelectItem value="grayscale">Grayscale</SelectItem>
+                  <SelectItem value="vibrant">Vibrant</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="pastel">Pastel</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
               <Label>Pattern Intensity:</Label>
               <Slider
                 value={[patternIntensity]}
@@ -274,6 +320,19 @@ export default function BannerGenerator() {
                 step={0.01}
                 className="mt-1"
               />
+            </div>
+            <div>
+              <Label htmlFor="fontSize">Font Size:</Label>
+              <Slider
+                id="fontSize"
+                value={[fontSize]}
+                onValueChange={(value) => setFontSize(value[0])}
+                min={24}
+                max={72}
+                step={1}
+                className="mt-1"
+              />
+              <div className="text-sm text-gray-500 mt-1">{fontSize}px</div>
             </div>
           </CollapsibleContent>
         </Collapsible>
