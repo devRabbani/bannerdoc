@@ -25,8 +25,9 @@ import { ColorModeRadio } from "./color-mode-radio";
 import SelectColorPalette from "./select-color-palette";
 import BannerText from "./banner-text";
 import CustomColorPicker from "./custom-color-picker";
-import SettingSliders from "./setting-sliders";
 import { AlignType, FillModeType, PaletteType } from "@/lib/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Slider } from "./ui/slider";
 
 export default function BannerGenerator() {
   const [bannerUrl, setBannerUrl] = useState("");
@@ -141,22 +142,46 @@ export default function BannerGenerator() {
               </Button>
             </div>
           </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-4 py-2">
-            <FormDiv>
-              <Label htmlFor="headerText">Header text:</Label>
-              <Input
-                id="headerText"
-                value={headerText}
-                onChange={(e) => setHeaderText(e.target.value)}
-                placeholder="Enter your header text here..."
-              />
-            </FormDiv>
-            <div className="flex flex-col items-start gap-8 md:flex-row-reverse">
-              <div className="flex w-full justify-between gap-2 min-[370px]:justify-start min-[370px]:gap-3 sm:gap-4 md:w-fit md:flex-col">
-                <AlignItemsRadio align={align} setAlign={setAlign} />
-                <ColorModeRadio fillMode={fillMode} setFillMode={setFillMode} />
-              </div>
-              <div className="w-full space-y-4">
+          <CollapsibleContent className="py-2">
+            <Tabs defaultValue="text">
+              <TabsList>
+                <TabsTrigger className="w-36" value="text">
+                  Text
+                </TabsTrigger>
+                <TabsTrigger className="w-36" value="background">
+                  Background
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="text" className="space-y-6 py-2.5">
+                <FormDiv>
+                  <Label htmlFor="headerText">Header text:</Label>
+                  <Input
+                    id="headerText"
+                    value={headerText}
+                    onChange={(e) => setHeaderText(e.target.value)}
+                    placeholder="Enter your header text here..."
+                  />
+                </FormDiv>
+                <div className="flex gap-5">
+                  <AlignItemsRadio align={align} setAlign={setAlign} />
+                  <FormDiv className="w-full">
+                    <Label htmlFor="fontSize">Font Size:</Label>
+                    <Slider
+                      id="fontSize"
+                      value={[fontSize]}
+                      onValueChange={(value) => setFontSize(value[0])}
+                      min={24}
+                      max={72}
+                      step={1}
+                      className="cursor-pointer"
+                    />
+                    <div className="mt-1 text-sm text-gray-500">
+                      {fontSize}px
+                    </div>
+                  </FormDiv>
+                </div>
+              </TabsContent>
+              <TabsContent value="background" className="space-y-6 py-2.5">
                 <div className="flex gap-3">
                   <SelectColorPalette value={palette} setValue={setPalette} />
                   {palette === "custom" && (
@@ -168,15 +193,28 @@ export default function BannerGenerator() {
                     />
                   )}
                 </div>
-
-                <SettingSliders
-                  fontSize={fontSize}
-                  setFontSize={setFontSize}
-                  patternIntensity={patternIntensity}
-                  setPatternIntensity={setPatternIntensity}
-                />
-              </div>
-            </div>
+                <div className="flex gap-6">
+                  <ColorModeRadio
+                    fillMode={fillMode}
+                    setFillMode={setFillMode}
+                  />
+                  <FormDiv className="w-full">
+                    <Label>Pattern Intensity:</Label>
+                    <Slider
+                      value={[patternIntensity]}
+                      onValueChange={(value) => setPatternIntensity(value[0])}
+                      min={0}
+                      max={0.5}
+                      step={0.01}
+                      className="cursor-pointer"
+                    />
+                    <div className="mt-1 text-sm text-gray-500">
+                      {(patternIntensity * 100).toPrecision(2)}%
+                    </div>
+                  </FormDiv>
+                </div>
+              </TabsContent>
+            </Tabs>
           </CollapsibleContent>
         </Collapsible>
         <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row">

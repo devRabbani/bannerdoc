@@ -1,6 +1,8 @@
 import FormDiv from "./form-div";
-import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { HexColorPicker } from "react-colorful";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Button } from "./ui/button";
 
 export default function CustomColorPicker({
   customColor1,
@@ -14,21 +16,33 @@ export default function CustomColorPicker({
   setCustomColor2: (color: string) => void;
 }) {
   return (
-    <FormDiv>
+    <FormDiv className="w-4/12">
       <Label>Custom color</Label>
-      <div className="flex gap-3 sm:gap-2">
-        <Input
-          value={customColor1}
-          onChange={(e) => setCustomColor1(e.target.value)}
-          type="color"
-          className="h-11 w-11 cursor-pointer p-1"
-        />
-        <Input
-          value={customColor2}
-          onChange={(e) => setCustomColor2(e.target.value)}
-          type="color"
-          className="h-11 w-11 cursor-pointer p-1"
-        />
+      <div className="flex gap-3">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="aspect-square w-full p-0"
+              style={{ backgroundColor: customColor1 }}
+            />
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <HexColorPicker color={customColor1} onChange={setCustomColor1} />
+          </PopoverContent>
+        </Popover>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="aspect-square w-full p-0"
+              style={{ backgroundColor: customColor2 }}
+            />
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <HexColorPicker color={customColor2} onChange={setCustomColor2} />
+          </PopoverContent>
+        </Popover>
       </div>
     </FormDiv>
   );
