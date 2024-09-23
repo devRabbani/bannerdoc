@@ -173,22 +173,34 @@ export const renderText = (
   fontSize: number,
 ) => {
   const maxWidth = IMAGE_WIDTH - IMAGE_PADDING * 2;
-  let y = headerText.length ? 200 : 250;
+  const headerLines = renderTextWithWrapping(
+    ctx,
+    headerText,
+    fontSize * 0.75,
+    maxWidth,
+  );
+  const mainLines = renderTextWithWrapping(ctx, mainText, fontSize, maxWidth);
+
+  // Calculate total Height
+  const heaederHeight = headerText.length
+    ? headerLines.length * fontSize * 0.9
+    : 0;
+  const mainHeight = mainLines.length * fontSize * 1.2;
+  const space = headerText.length ? fontSize * 0.5 : 0;
+  const totalHeight = heaederHeight + mainHeight + space;
+
+  // Starting point vertical
+  let y = (IMAGE_HEIGHT - totalHeight) / 2;
 
   if (headerText.length) {
-    const headerLines = renderTextWithWrapping(
-      ctx,
-      headerText,
-      fontSize * 0.75,
-      maxWidth,
-    );
+    ctx.font = `bold ${fontSize * 0.75}px Arial`;
     headerLines.forEach((line, index) => {
       ctx.fillText(line, x, y + index * fontSize * 0.9);
     });
-    y += headerLines.length * fontSize * 0.9 + fontSize * 0.5;
+    y += heaederHeight + space;
   }
 
-  const mainLines = renderTextWithWrapping(ctx, mainText, fontSize, maxWidth);
+  ctx.font = `bold ${fontSize}px Arial`;
   mainLines.forEach((line, index) => {
     ctx.fillText(line, x, y + index * fontSize * 1.2);
   });
