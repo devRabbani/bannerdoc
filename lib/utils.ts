@@ -2,7 +2,6 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { AlignType, FillModeType, PaletteType } from "./types";
 import {
-  backgroundPatterns,
   colorPalettes,
   HALF_IMAGE_HEIGHT,
   HALF_IMAGE_WIDTH,
@@ -20,7 +19,7 @@ export const selectColors = (
   palette: PaletteType,
   fillMode: FillModeType,
   customColor1: string,
-  customColor2: string
+  customColor2: string,
 ) => {
   if (palette === "custom") {
     return [customColor1, customColor2];
@@ -38,7 +37,7 @@ export const selectColors = (
 // Create Gradient
 export const createGradient = (
   ctx: CanvasRenderingContext2D,
-  selectedColors: string[]
+  selectedColors: string[],
 ) => {
   const gradientType = Math.random() < 0.5 ? "linear" : "radial";
   let gradient;
@@ -65,7 +64,7 @@ export const createGradient = (
       0,
       centerX,
       centerY,
-      1000
+      1000,
     );
   }
 
@@ -81,7 +80,7 @@ export const createGradient = (
 export const applyBackground = (
   ctx: CanvasRenderingContext2D,
   fillMode: FillModeType,
-  selectedColors: string[]
+  selectedColors: string[],
 ) => {
   // Is gradiant 70% chance, If fillmode gradient 100% chance
   const isGradient =
@@ -99,30 +98,26 @@ export const applyBackground = (
 // Apply Pattern
 export const applyPattern = (
   ctx: CanvasRenderingContext2D,
-  patternIntensity: number
+  patternIntensity: number,
 ) => {
-  return new Promise<void>((resolve) => {
-    const patternImg = new Image();
-    patternImg.src =
-      backgroundPatterns[Math.floor(Math.random() * backgroundPatterns.length)];
-    patternImg.onload = () => {
-      if (patternImg.src !== "data:,") {
-        const pattern = ctx.createPattern(patternImg, "repeat");
-        if (pattern) {
-          ctx.globalAlpha = patternIntensity;
-          ctx.fillStyle = pattern;
-          ctx.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
-          ctx.globalAlpha = 1;
-        }
-      }
-      resolve();
-    };
-  });
+  const backgroundColor = getAverageColor(ctx, IMAGE_WIDTH, IMAGE_HEIGHT);
+  const patternColor = getPatternColor(backgroundColor);
+
+  const patternFn =
+    backgroundPatterns[Math.floor(Math.random() * backgroundPatterns.length)];
+  const pattern = patternFn(ctx, patternColor);
+
+  if (pattern) {
+    ctx.fillStyle = pattern;
+    ctx.globalAlpha = patternIntensity;
+    ctx.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
+    ctx.globalAlpha = 1;
+  }
 };
 
 export const setupTextRendering = (
   ctx: CanvasRenderingContext2D,
-  align: AlignType
+  align: AlignType,
 ) => {
   const backgroundColor = getAverageColor(ctx, IMAGE_WIDTH, IMAGE_HEIGHT);
   const textColor = getContrastColor(backgroundColor);
@@ -146,7 +141,7 @@ export const renderTextWithWrapping = (
   ctx: CanvasRenderingContext2D,
   text: string,
   fontSize: number,
-  maxWidth: number
+  maxWidth: number,
 ) => {
   ctx.font = `bold ${fontSize}px Arial`;
   const words = text.split(" ");
@@ -175,7 +170,7 @@ export const renderText = (
   headerText: string,
   mainText: string,
   x: number,
-  fontSize: number
+  fontSize: number,
 ) => {
   const maxWidth = IMAGE_WIDTH - IMAGE_PADDING * 2;
   let y = headerText.length ? 200 : 250;
@@ -185,7 +180,7 @@ export const renderText = (
       ctx,
       headerText,
       fontSize * 0.75,
-      maxWidth
+      maxWidth,
     );
     headerLines.forEach((line, index) => {
       ctx.fillText(line, x, y + index * fontSize * 0.9);
@@ -203,7 +198,7 @@ export const renderText = (
 export const getAverageColor = (
   ctx: CanvasRenderingContext2D,
   width: number,
-  height: number
+  height: number,
 ) => {
   const imageData = ctx.getImageData(0, 0, width, height);
   let r = 0,
@@ -241,3 +236,106 @@ export const getContrastColor = (color: string) => {
   }
   return "#000000";
 };
+
+// Function to get a pattern color based on the background color
+export const getPatternColor = (backgroundColor: string) => {
+  const rgb = backgroundColor.match(/\d+/g);
+  if (rgb) {
+    const brightness =
+      (parseInt(rgb[0]) * 299 +
+        parseInt(rgb[1]) * 587 +
+        parseInt(rgb[2]) * 114) /
+      1000;
+    return brightness > 128
+      ? "rgba(0, 0, 0, 0.14)"
+      : "rgba(255, 255, 255, 0.14)";
+  }
+  return "rgba(0, 0, 0, 0.14)";
+};
+
+// Patterns
+const backgroundPatterns = [
+  createDiagonalPattern,
+  createDotPattern,
+  createCrossPattern,
+  createWavePattern,
+  createCirclePattern,
+  () => null, // No pattern option
+];
+
+// Pattern creation functions (unchanged)
+function createDiagonalPattern(ctx: CanvasRenderingContext2D, color: string) {
+  const patternCanvas = document.createElement("canvas");
+  const patternCtx = patternCanvas.getContext("2d");
+  patternCanvas.width = patternCanvas.height = 10;
+  if (patternCtx) {
+    patternCtx.strokeStyle = color;
+    patternCtx.lineWidth = 1;
+    patternCtx.beginPath();
+    patternCtx.moveTo(0, 10);
+    patternCtx.lineTo(10, 0);
+    patternCtx.stroke();
+  }
+  return ctx.createPattern(patternCanvas, "repeat");
+}
+
+function createDotPattern(ctx: CanvasRenderingContext2D, color: string) {
+  const patternCanvas = document.createElement("canvas");
+  const patternCtx = patternCanvas.getContext("2d");
+  patternCanvas.width = patternCanvas.height = 10;
+  if (patternCtx) {
+    patternCtx.fillStyle = color;
+    patternCtx.beginPath();
+    patternCtx.arc(5, 5, 1, 0, Math.PI * 2);
+    patternCtx.fill();
+  }
+  return ctx.createPattern(patternCanvas, "repeat");
+}
+
+function createCrossPattern(ctx: CanvasRenderingContext2D, color: string) {
+  const patternCanvas = document.createElement("canvas");
+  const patternCtx = patternCanvas.getContext("2d");
+  patternCanvas.width = patternCanvas.height = 10;
+  if (patternCtx) {
+    patternCtx.strokeStyle = color;
+    patternCtx.lineWidth = 1;
+    patternCtx.beginPath();
+    patternCtx.moveTo(5, 0);
+    patternCtx.lineTo(5, 10);
+    patternCtx.moveTo(0, 5);
+    patternCtx.lineTo(10, 5);
+    patternCtx.stroke();
+  }
+  return ctx.createPattern(patternCanvas, "repeat");
+}
+
+function createWavePattern(ctx: CanvasRenderingContext2D, color: string) {
+  const patternCanvas = document.createElement("canvas");
+  const patternCtx = patternCanvas.getContext("2d");
+  patternCanvas.width = 20;
+  patternCanvas.height = 10;
+  if (patternCtx) {
+    patternCtx.strokeStyle = color;
+    patternCtx.lineWidth = 1;
+    patternCtx.beginPath();
+    patternCtx.moveTo(0, 5);
+    patternCtx.quadraticCurveTo(5, 0, 10, 5);
+    patternCtx.quadraticCurveTo(15, 10, 20, 5);
+    patternCtx.stroke();
+  }
+  return ctx.createPattern(patternCanvas, "repeat");
+}
+
+function createCirclePattern(ctx: CanvasRenderingContext2D, color: string) {
+  const patternCanvas = document.createElement("canvas");
+  const patternCtx = patternCanvas.getContext("2d");
+  patternCanvas.width = patternCanvas.height = 20;
+  if (patternCtx) {
+    patternCtx.strokeStyle = color;
+    patternCtx.lineWidth = 1;
+    patternCtx.beginPath();
+    patternCtx.arc(10, 10, 5, 0, Math.PI * 2);
+    patternCtx.stroke();
+  }
+  return ctx.createPattern(patternCanvas, "repeat");
+}

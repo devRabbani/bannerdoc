@@ -28,6 +28,7 @@ import CustomColorPicker from "./custom-color-picker";
 import { AlignType, FillModeType, PaletteType } from "@/lib/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Slider } from "./ui/slider";
+import { IMAGE_HEIGHT, IMAGE_WIDTH } from "@/lib/constants";
 
 export default function BannerGenerator() {
   const [bannerUrl, setBannerUrl] = useState("");
@@ -55,18 +56,21 @@ export default function BannerGenerator() {
     setFontSize(48);
     setCustomColor1("#000000");
     setCustomColor2("#ffffff");
+    canvasRef.current
+      ?.getContext("2d")
+      ?.clearRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
   };
 
   const downloadBanner = () => {
     if (bannerUrl) {
       const link = document.createElement("a");
       link.href = bannerUrl;
-      link.download = "twitter-banner.png";
+      link.download = "bannerdoc-banner.png";
       link.click();
     }
   };
 
-  const generateBanner = async () => {
+  const generateBanner = () => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
@@ -79,7 +83,8 @@ export default function BannerGenerator() {
           customColor2,
         );
         applyBackground(ctx, fillMode, selectedColors);
-        await applyPattern(ctx, patternIntensity);
+        applyPattern(ctx, patternIntensity);
+
         const x = setupTextRendering(ctx, align);
         renderText(ctx, headerText, text, x, fontSize);
         setBannerUrl(canvas.toDataURL());
@@ -97,7 +102,7 @@ export default function BannerGenerator() {
   return (
     <div>
       <div className="sticky -top-px z-50 bg-background py-5">
-        <div className="relative mx-auto aspect-[3/1] w-full scroll-mt-56 overflow-hidden rounded-md bg-muted-foreground/80">
+        <div className="relative mx-auto aspect-[3/1] w-full scroll-mt-56 overflow-hidden rounded-md bg-muted-foreground/60">
           <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
         </div>
         <div className="flex items-end justify-between">
@@ -200,7 +205,7 @@ export default function BannerGenerator() {
                       value={[patternIntensity]}
                       onValueChange={(value) => setPatternIntensity(value[0])}
                       min={0}
-                      max={0.5}
+                      max={0.8}
                       step={0.01}
                       className="cursor-pointer"
                     />
