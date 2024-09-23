@@ -26,7 +26,12 @@ export default function SelectColorPalette({
         <SelectTrigger id="colorPalette" className="w-full">
           <SelectValue placeholder="Select a color palette" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent
+          ref={(ref) => {
+            if (!ref) return;
+            ref.ontouchstart = (e) => e.preventDefault();
+          }}
+        >
           <SelectItem value="cool">Cool</SelectItem>
           <SelectItem value="warm">Warm</SelectItem>
           <SelectItem value="grayscale">Grayscale</SelectItem>
