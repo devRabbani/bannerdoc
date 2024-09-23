@@ -6,8 +6,8 @@ import { Star } from "lucide-react";
 
 export default function Nav() {
   return (
-    <nav className="bg-background sticky top-0 z-50">
-      <div className="container py-3 flex gap-3 items-center">
+    <nav>
+      <div className="container flex items-center gap-3 py-3">
         <Link href="/" className="text-lg font-medium">
           BannerDoc
         </Link>
@@ -16,7 +16,7 @@ export default function Nav() {
             href="https://github.com/devRabbani/bannerdoc"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center ml-auto"
+            className="ml-auto flex items-center"
           >
             <Star className="mr-2 h-4 w-4" />
             GitHub

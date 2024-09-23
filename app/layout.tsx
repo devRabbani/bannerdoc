@@ -90,7 +90,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Nav />
-          <main className="container h-full pb-16 pt-2">{children}</main>
+          <main className="container h-full pb-16">{children}</main>
           <Footer />
         </ThemeProvider>
       </body>

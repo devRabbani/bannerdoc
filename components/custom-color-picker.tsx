@@ -16,7 +16,7 @@ export default function CustomColorPicker({
   setCustomColor2: (color: string) => void;
 }) {
   return (
-    <FormDiv className="w-4/12">
+    <FormDiv className="w-3/6 sm:w-4/12">
       <Label>Custom color</Label>
       <div className="flex gap-3">
         <Popover>

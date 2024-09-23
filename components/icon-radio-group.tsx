@@ -24,21 +24,15 @@ export default function IconRadioGroup<T extends string>({
   return (
     <FormDiv>
       <Label>{label}:</Label>
-      <RadioGroup
-        value={value}
-        onValueChange={setValue}
-        className="mt-2 flex gap-2 md:gap-3"
-      >
+      <RadioGroup value={value} onValueChange={setValue} className="flex gap-3">
         {options.map(({ value, icon: Icon }) => (
           <Label
             key={value}
             htmlFor={value}
-            className="flex h-12 w-[3.2rem] cursor-pointer flex-col items-center justify-center gap-1 rounded-md border-2 border-muted bg-popover hover:bg-accent hover:text-accent-foreground sm:h-14 sm:w-16 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:text-primary"
+            className="flex h-14 w-16 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-md border-2 border-muted bg-popover hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:text-primary"
           >
-            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span className="text-[0.5rem] capitalize sm:text-[0.7rem]">
-              {value}
-            </span>
+            <Icon className="h-4 w-4" />
+            <span className="text-[0.7rem] capitalize">{value}</span>
             <RadioGroupItem value={value} id={value} className="sr-only" />
           </Label>
         ))}

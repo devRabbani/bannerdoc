@@ -38,12 +38,11 @@ export default function BannerGenerator() {
   const [palette, setPalette] = useState<PaletteType>("cool");
   const [patternIntensity, setPatternIntensity] = useState(0.1);
   const [fontSize, setFontSize] = useState(48);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(true);
   const [customColor1, setCustomColor1] = useState("#000000");
   const [customColor2, setCustomColor2] = useState("#ffffff");
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const bannerContainerRef = useRef<HTMLDivElement>(null);
 
   const handleReset = () => {
     setBannerUrl("");
@@ -83,7 +82,6 @@ export default function BannerGenerator() {
         await applyPattern(ctx, patternIntensity);
         const x = setupTextRendering(ctx, align);
         renderText(ctx, headerText, text, x, fontSize);
-        bannerContainerRef.current?.scrollIntoView({ behavior: "smooth" });
         setBannerUrl(canvas.toDataURL());
       }
     }
@@ -97,11 +95,8 @@ export default function BannerGenerator() {
   }, []);
 
   return (
-    <div
-      ref={bannerContainerRef}
-      className="mx-auto scroll-mt-56 space-y-6 py-4"
-    >
-      <div className="">
+    <div>
+      <div className="sticky -top-px z-50 bg-background py-5">
         <div className="relative mx-auto aspect-[3/1] w-full scroll-mt-56 overflow-hidden rounded-md bg-muted-foreground/80">
           <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
         </div>
@@ -119,7 +114,7 @@ export default function BannerGenerator() {
           </Button>
         </div>
       </div>
-      <div className="">
+      <div className="mt-3 sm:mt-2">
         <BannerText text={text} setText={setText} />
         <Collapsible
           className="mt-6"
@@ -144,11 +139,11 @@ export default function BannerGenerator() {
           </CollapsibleTrigger>
           <CollapsibleContent className="py-2">
             <Tabs defaultValue="text">
-              <TabsList>
-                <TabsTrigger className="w-36" value="text">
+              <TabsList className="w-full sm:w-fit">
+                <TabsTrigger className="w-full sm:w-36" value="text">
                   Text
                 </TabsTrigger>
-                <TabsTrigger className="w-36" value="background">
+                <TabsTrigger className="w-full sm:w-36" value="background">
                   Background
                 </TabsTrigger>
               </TabsList>
@@ -162,7 +157,7 @@ export default function BannerGenerator() {
                     placeholder="Enter your header text here..."
                   />
                 </FormDiv>
-                <div className="flex gap-5">
+                <div className="flex flex-col gap-6 sm:flex-row">
                   <AlignItemsRadio align={align} setAlign={setAlign} />
                   <FormDiv className="w-full">
                     <Label htmlFor="fontSize">Font Size:</Label>
@@ -193,7 +188,7 @@ export default function BannerGenerator() {
                     />
                   )}
                 </div>
-                <div className="flex gap-6">
+                <div className="flex flex-col gap-6 sm:flex-row">
                   <ColorModeRadio
                     fillMode={fillMode}
                     setFillMode={setFillMode}
