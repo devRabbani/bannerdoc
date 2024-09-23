@@ -27,7 +27,7 @@ export default function CustomColorPicker({
               style={{ backgroundColor: customColor1 }}
             />
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
+          <PopoverContent align="end" className="w-auto p-0">
             <HexColorPicker color={customColor1} onChange={setCustomColor1} />
           </PopoverContent>
         </Popover>
@@ -39,7 +39,7 @@ export default function CustomColorPicker({
               style={{ backgroundColor: customColor2 }}
             />
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
+          <PopoverContent align="end" className="w-auto p-0">
             <HexColorPicker color={customColor2} onChange={setCustomColor2} />
           </PopoverContent>
         </Popover>

@@ -35,12 +35,12 @@ export default function BannerGenerator() {
   const [text, setText] = useState("");
   const [align, setAlign] = useState<AlignType>("center");
   const [fillMode, setFillMode] = useState<FillModeType>("auto");
-  const [palette, setPalette] = useState<PaletteType>("cool");
+  const [palette, setPalette] = useState<PaletteType>("pastel");
   const [patternIntensity, setPatternIntensity] = useState(0.1);
   const [fontSize, setFontSize] = useState(48);
-  const [showAdvanced, setShowAdvanced] = useState(true);
-  const [customColor1, setCustomColor1] = useState("#000000");
-  const [customColor2, setCustomColor2] = useState("#ffffff");
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [customColor1, setCustomColor1] = useState("#FF5F6D");
+  const [customColor2, setCustomColor2] = useState("#FFC371");
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -121,9 +121,9 @@ export default function BannerGenerator() {
           open={showAdvanced}
           onOpenChange={setShowAdvanced}
         >
-          <CollapsibleTrigger asChild>
-            <div className="w-full">
-              <Separator />
+          <div className="w-full">
+            <Separator />
+            <CollapsibleTrigger asChild>
               <Button
                 variant="link"
                 className="-mt-5 flex w-fit items-center gap-1 bg-background px-2"
@@ -135,8 +135,9 @@ export default function BannerGenerator() {
                   }`}
                 />
               </Button>
-            </div>
-          </CollapsibleTrigger>
+            </CollapsibleTrigger>
+          </div>
+
           <CollapsibleContent className="py-2">
             <Tabs defaultValue="text">
               <TabsList className="w-full sm:w-fit">
@@ -212,7 +213,7 @@ export default function BannerGenerator() {
             </Tabs>
           </CollapsibleContent>
         </Collapsible>
-        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Button onClick={generateBanner} className="py-5 sm:py-2">
             Generate Banner
           </Button>
